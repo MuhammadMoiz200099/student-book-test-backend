@@ -3,6 +3,7 @@ import http from 'http';
 import os from 'os';
 import cors from 'cors'
 import l from './logger';
+import knexDB from "../common/database/database";
 
 const whitelist = process.env.whitelist_url.split(',');
 const app = express();
@@ -25,6 +26,7 @@ const corsOptions = {
 export default class ExpressServer {
   private routes: (app: Application) => void;
   constructor() {
+    app.set('db', knexDB);
     app.use(cors(corsOptions));
   }
 
@@ -40,6 +42,9 @@ export default class ExpressServer {
         process.env.NODE_ENV || 'development'
         } @: ${os.hostname()} on port: ${p}}`
       );
+    if(app.get('db')) {
+      l.info("Database is connected successfully with knex");
+    }
     this.routes(app);
     http.createServer(app).listen(port, welcome(port));
     return app;

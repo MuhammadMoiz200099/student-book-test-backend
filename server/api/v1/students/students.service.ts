@@ -1,3 +1,4 @@
+import knexDB from "../../../common/database/database";
 
 export class StudentService {
 
@@ -6,7 +7,11 @@ export class StudentService {
     async getStudents() {
         return new Promise(async (resolve, reject) => {
             try {
-                resolve({ message: "successfully copied" });
+                const students = await knexDB.select("*")
+                .from("student")
+                .then(rows => rows);
+
+                resolve(students);
             } catch (err) {
                 reject(err);
             }
