@@ -27,6 +27,14 @@ export default class ExpressServer {
   private routes: (app: Application) => void;
   constructor() {
     app.set('db', knexDB);
+    app.use(express.json({ limit: process.env.REQUEST_LIMIT || '100kb' }));
+    app.use(
+      express.urlencoded({
+        extended: true,
+        limit: process.env.REQUEST_LIMIT || '100kb',
+      })
+    );
+    app.use(express.text({ limit: process.env.REQUEST_LIMIT || '100kb' }));
     app.use(cors(corsOptions));
   }
 
@@ -38,11 +46,10 @@ export default class ExpressServer {
   listen(port: number): Application {
     const welcome = (p: number) => (): void =>
       l.info(
-        `up and running in ${
-        process.env.NODE_ENV || 'development'
+        `up and running in ${process.env.NODE_ENV || 'development'
         } @: ${os.hostname()} on port: ${p}}`
       );
-    if(app.get('db')) {
+    if (app.get('db')) {
       l.info("Database is connected successfully with knex");
     }
     this.routes(app);

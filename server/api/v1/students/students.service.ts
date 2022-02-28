@@ -9,6 +9,7 @@ export class StudentService {
             try {
                 const students = await knexDB.select("*")
                     .from("student")
+                    .orderBy('id', 'asc')
                     .then(rows => rows);
 
                 resolve(students);
@@ -34,12 +35,17 @@ export class StudentService {
     async updateStudent(id, payload) {
         return new Promise(async (resolve, reject) => {
             try {
-                await knexDB
+
+                if (!payload) {
+                    reject({ code: 400, message: "Payload can't be empty, object can't be null." })
+                }
+
+                const udpated = await knexDB
                     .from("student")
                     .where({ id })
                     .update(payload)
 
-                resolve({ message: "Student Updated Successfully" });
+                resolve({ message: "Student Updated Successfully", udpated });
             } catch (err) {
                 reject(err);
             }

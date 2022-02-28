@@ -34,7 +34,8 @@ export class Controller extends BaseController {
     }
     async updateBook(req: Request, res: Response): Promise<void> {
         try {
-            const response = await BooksService.updateBook(req.params.id, req.body);
+            const id = req.params['id'];
+            const response = await BooksService.updateBook(id, req.body);
             super.response(res, response, 200, "");
         }
         catch (error) {
